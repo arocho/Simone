@@ -1,8 +1,6 @@
 // Wiring:
 // Buzzer + : D9
 // Buzzer - : GND
-// Vibrator + : TX n/a
-// Vibrator - : GND n/a
 // LED strip + : D6
 // LED strip - : GND
 // LED stip in : D10
@@ -12,12 +10,13 @@
 // RED : D12
 // BLUE : SDA
 
+//Libraries
 #include <CapacitiveSensor.h>
 #include <Adafruit_NeoPixel.h>
 #include "pitches.h"
 
 //Power is D6 and Input is D10 on Flora
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(6,10,NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(4,10,NEO_GRB + NEO_KHZ800);
 
 #define MAXROUNDS 255
 
@@ -28,23 +27,28 @@ CapacitiveSensor cs_Yellow = CapacitiveSensor(TOUCH_OUT,3); //SCL on Flora (oran
 CapacitiveSensor cs_Red = CapacitiveSensor(TOUCH_OUT,12); //D12 on Flora (purple)
 CapacitiveSensor cs_Blue = CapacitiveSensor(TOUCH_OUT,2); //SDA on Flora
 
-int motor = 1; //TX on Flora n/a
 int buzzer = 9; //D9 on Flora
 
+//Color constants
 #define ERROR_COLOR strip.Color(255,0,0)
-#define ERROR_SOUND NOTE_A2
 #define PRETTY_COLOR strip.Color(255,0,255)
 
+//Error sound constant
+#define ERROR_SOUND NOTE_A2
+
+//Arrays for sensors: Physical sensors, sensor names, LED color, and sound
 CapacitiveSensor sensors[] = {cs_Green, cs_Yellow, cs_Red, cs_Blue};
 String buttons[] = {"GREEN", "YELLOW", "RED", "BLUE"};
 uint32_t colors[] = {strip.Color(0,255,0), strip.Color(255,255,0), strip.Color(255,0,0), strip.Color(0,0,255)};
 int sounds[] = {NOTE_C4, NOTE_E4, NOTE_G4, NOTE_C5};
 
+
 //boolean currentPressed[] = {false, false, false, false};
 
+//Sensor sensitivity threshold
 #define THRESH 1
 
-// notes in the melody:
+// Arrays that contain the notes for the melodies at the start and end of the game
 int melody_start[] =
 {
 	NOTE_C5, NOTE_D5, NOTE_G5, NOTE_D5, NOTE_C5, NOTE_D5, NOTE_G5, NOTE_D5
@@ -56,7 +60,7 @@ int melody_end[] =
 };
 
 
-// note durations: 4 = quarter note, 8 = eighth note, etc.:
+//Note durations for each respective melody: 4 = quarter note, 8 = eighth note, etc.:
 int noteDurations_start[] =
 {
 	5, 5, 4, 5, 5, 9, 3, 6
@@ -72,7 +76,6 @@ void setup()
 {
 	Serial.begin(9600);
 	Serial.println("start");
-	pinMode(motor, HIGH);
 	strip.begin();
 	strip.show();
 	
@@ -242,7 +245,6 @@ void activateColor(int index)
 {
 	strip.setPixelColor(index,colors[index]);
 	strip.show();
-	analogWrite(motor, 2000);  
 	tone(buzzer, sounds[index],500);
 }
 
@@ -250,7 +252,6 @@ void deactivateColor(int index)
 {
 	strip.setPixelColor(index,strip.Color(0,0,0));
 	strip.show();
-	analogWrite(motor, 0); 
 }
 
 void deactivateAll()
@@ -269,7 +270,6 @@ void badFeedback(){
 	tone(buzzer, ERROR_SOUND,1000);
 	for (int repeat=0;repeat<4;repeat++)
 	{
-		analogWrite(motor, 2000);  
 		for (int i=0;i<4;i++) {
 			strip.setPixelColor(i,ERROR_COLOR);
 			strip.show();
