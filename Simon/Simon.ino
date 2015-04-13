@@ -1,33 +1,33 @@
 // Wiring:
-// Buzzer + : D9
+// Buzzer + : D6
 // Buzzer - : GND
-// LED strip + : D6
+// LED strip + : VBatt
 // LED strip - : GND
-// LED stip in : D10
-// TOUCH OUT : RX
-// YELLOW : SCL
-// GREEN : VBATT
-// RED : D12
-// BLUE : SDA
+// LED stip in : D12
+// TOUCH OUT : SDA
+// YELLOW : RX
+// GREEN : D10
+// RED : TX
+// BLUE : SCL
 
 //Libraries
 #include <CapacitiveSensor.h>
 #include <Adafruit_NeoPixel.h>
 #include "pitches.h"
 
-//Power is D6 and Input is D10 on Flora
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(4,10,NEO_GRB + NEO_KHZ800);
+//Power is VBatt and Input is D12 on Flora
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(4,12,NEO_GRB + NEO_KHZ800);
 
 #define MAXROUNDS 255
 
 #define TOUCH_OUT 0 //RX on Flora
 
-CapacitiveSensor cs_Green = CapacitiveSensor(TOUCH_OUT,4); //VBATT on Flora
-CapacitiveSensor cs_Yellow = CapacitiveSensor(TOUCH_OUT,3); //SCL on Flora (orange)
-CapacitiveSensor cs_Red = CapacitiveSensor(TOUCH_OUT,12); //D12 on Flora (purple)
-CapacitiveSensor cs_Blue = CapacitiveSensor(TOUCH_OUT,2); //SDA on Flora
+CapacitiveSensor cs_Green = CapacitiveSensor(TOUCH_OUT,10); //D10 on Flora
+CapacitiveSensor cs_Yellow = CapacitiveSensor(TOUCH_OUT,0); //RX on Flora (orange)
+CapacitiveSensor cs_Red = CapacitiveSensor(TOUCH_OUT,1); //TX on Flora (purple)
+CapacitiveSensor cs_Blue = CapacitiveSensor(TOUCH_OUT,3); //SCL on Flora
 
-int buzzer = 9; //D9 on Flora
+int buzzer = 6; //D6 on Flora
 
 //Color constants
 #define ERROR_COLOR strip.Color(255,0,0)
@@ -46,7 +46,7 @@ int sounds[] = {NOTE_C4, NOTE_E4, NOTE_G4, NOTE_C5};
 //boolean currentPressed[] = {false, false, false, false};
 
 //Sensor sensitivity threshold
-#define THRESH 1
+#define THRESH 5
 
 // Arrays that contain the notes for the melodies at the start and end of the game
 int melody_start[] =
